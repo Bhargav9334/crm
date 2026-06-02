@@ -196,8 +196,9 @@ if (loading) {
 
   </div>
 
- {projects.length > 0 ? (
-  projects.slice(0, 2).map((project) => (
+{projects.length > 0 ? (
+  <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+    {projects.slice(0, 4).map((project) => (
       <div
         key={project.id}
         className="border rounded-2xl p-6 mb-5"
@@ -252,8 +253,9 @@ if (loading) {
           </p>
         </div>
       </div>
-    ))
-  ) : (
+  ))}
+  </div>
+) : (
     <div className="text-gray-500">
       No Projects Assigned
     </div>
