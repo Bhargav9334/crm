@@ -257,60 +257,111 @@ export {
   ClientDashboardSkeleton,
   ClientProfileSkeleton,
 };
- const EmployeeDashboardSkeleton = () => {
+  const EmployeeDashboardSkeleton = () => {
   return (
     <div className="p-6 bg-slate-50 min-h-screen animate-pulse">
 
       {/* Header */}
-      <div className="h-52 rounded-3xl bg-gray-200 mb-8"></div>
+      <div className="bg-white rounded-3xl p-8 mb-8 shadow-sm">
+        <div className="h-10 w-72 bg-gray-200 rounded mb-4"></div>
+
+        <div className="h-5 w-40 bg-gray-200 rounded mb-5"></div>
+
+        <div className="flex gap-6">
+          <div className="h-4 w-48 bg-gray-200 rounded"></div>
+          <div className="h-4 w-32 bg-gray-200 rounded"></div>
+        </div>
+      </div>
 
       {/* Stats Cards */}
-      <div className="grid md:grid-cols-4 gap-5 mb-8">
+      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-5 mb-8">
+
         {[1, 2, 3, 4].map((item) => (
           <div
             key={item}
             className="bg-white rounded-2xl p-6 shadow-sm"
           >
-            <div className="h-4 w-24 bg-gray-200 rounded mb-4"></div>
+            <div className="flex justify-between items-start">
 
-            <div className="h-10 w-32 bg-gray-200 rounded"></div>
+              <div>
+                <div className="h-4 w-24 bg-gray-200 rounded mb-4"></div>
+
+                <div className="h-10 w-32 bg-gray-200 rounded"></div>
+              </div>
+
+              <div className="h-8 w-8 bg-gray-200 rounded-full"></div>
+
+            </div>
           </div>
         ))}
+
       </div>
 
-      {/* My Projects */}
+      {/* Projects Section */}
       <div className="bg-white rounded-3xl p-8 shadow-sm">
-        <div className="h-8 w-52 bg-gray-200 rounded mb-8"></div>
 
-        {[1, 2].map((item) => (
-          <div
-            key={item}
-            className="border rounded-2xl p-6 mb-5"
-          >
-            <div className="flex justify-between mb-4">
-              <div className="h-6 w-52 bg-gray-200 rounded"></div>
+        <div className="flex justify-between items-center mb-8">
+          <div className="h-8 w-52 bg-gray-200 rounded"></div>
 
-              <div className="h-8 w-28 bg-gray-200 rounded-full"></div>
-            </div>
+          <div className="h-6 w-20 bg-gray-200 rounded"></div>
+        </div>
 
-            <div className="h-4 w-full bg-gray-200 rounded mb-2"></div>
-            <div className="h-4 w-3/4 bg-gray-200 rounded mb-4"></div>
+        {/* 2x2 Grid Projects */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
 
-            <div className="h-3 w-full bg-gray-200 rounded mb-5"></div>
+          {[1, 2, 3, 4].map((item) => (
+            <div
+              key={item}
+              className="border rounded-2xl p-6"
+            >
 
-            <div className="grid md:grid-cols-2 gap-4">
-              <div>
-                <div className="h-4 w-24 bg-gray-200 rounded mb-2"></div>
-                <div className="h-5 w-32 bg-gray-200 rounded"></div>
+              {/* Project Header */}
+              <div className="flex justify-between items-center mb-5">
+
+                <div className="h-7 w-40 bg-gray-200 rounded"></div>
+
+                <div className="h-10 w-36 bg-gray-200 rounded-full"></div>
+
               </div>
 
-              <div>
-                <div className="h-4 w-24 bg-gray-200 rounded mb-2"></div>
-                <div className="h-5 w-32 bg-gray-200 rounded"></div>
+              {/* Description */}
+              <div className="h-4 w-full bg-gray-200 rounded mb-3"></div>
+              <div className="h-4 w-3/4 bg-gray-200 rounded mb-5"></div>
+
+              {/* Progress Bar */}
+              <div className="h-3 w-full bg-gray-200 rounded mb-6"></div>
+
+              {/* Dates */}
+              <div className="grid grid-cols-2 gap-4 mb-5">
+
+                <div>
+                  <div className="h-4 w-24 bg-gray-200 rounded mb-2"></div>
+
+                  <div className="h-5 w-32 bg-gray-200 rounded"></div>
+                </div>
+
+                <div>
+                  <div className="h-4 w-24 bg-gray-200 rounded mb-2"></div>
+
+                  <div className="h-5 w-32 bg-gray-200 rounded"></div>
+                </div>
+
               </div>
+
+              {/* Progress Notes */}
+              <div>
+                <div className="h-4 w-32 bg-gray-200 rounded mb-2"></div>
+
+                <div className="h-4 w-full bg-gray-200 rounded mb-2"></div>
+
+                <div className="h-4 w-2/3 bg-gray-200 rounded"></div>
+              </div>
+
             </div>
-          </div>
-        ))}
+          ))}
+
+        </div>
+
       </div>
 
     </div>
@@ -497,48 +548,70 @@ export const EmployeeProjectsSkeleton = () => {
   return (
     <div className="p-6 bg-slate-50 min-h-screen animate-pulse">
 
-      {/* Title */}
-      <div className="h-10 w-64 bg-gray-200 rounded-xl mb-10"></div>
+      {/* Header */}
+      <div className="mb-8">
+        <div className="h-10 w-64 bg-gray-200 rounded-xl mb-4"></div>
+        <div className="h-5 w-80 bg-gray-200 rounded"></div>
+      </div>
 
-      {[1, 2, 3].map((item) => (
-        <div
-          key={item}
-          className="bg-white rounded-3xl p-7 mb-7 shadow-sm"
-        >
-          {/* Header */}
-          <div className="flex justify-between items-center">
+      {/* Projects Grid */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-7">
 
-            <div className="h-8 w-52 bg-gray-200 rounded-lg"></div>
+        {[1, 2, 3, 4].map((item) => (
+          <div
+            key={item}
+            className="bg-white rounded-3xl p-7 shadow-sm"
+          >
+            {/* Top */}
+            <div className="flex justify-between items-start">
 
-            <div className="h-12 w-20 bg-gray-200 rounded-full"></div>
+              <div className="flex-1">
+                <div className="h-8 w-52 bg-gray-200 rounded-lg mb-4"></div>
 
-          </div>
+                <div className="h-4 bg-gray-200 rounded w-full mb-3"></div>
+                <div className="h-4 bg-gray-200 rounded w-3/4"></div>
+              </div>
 
-          {/* Description */}
-          <div className="mt-6 space-y-3">
-            <div className="h-4 bg-gray-200 rounded w-full"></div>
-            <div className="h-4 bg-gray-200 rounded w-3/4"></div>
-          </div>
+              <div className="h-12 w-28 bg-gray-200 rounded-full ml-4"></div>
 
-          {/* Progress Bar */}
-          <div className="mt-6 h-4 bg-gray-200 rounded-full"></div>
-
-          {/* Dates */}
-          <div className="grid md:grid-cols-2 gap-6 mt-6">
-
-            <div>
-              <div className="h-4 w-24 bg-gray-200 rounded mb-3"></div>
-              <div className="h-5 w-32 bg-gray-200 rounded"></div>
             </div>
 
-            <div>
-              <div className="h-4 w-24 bg-gray-200 rounded mb-3"></div>
-              <div className="h-5 w-32 bg-gray-200 rounded"></div>
+            {/* Progress Bar */}
+            <div className="mt-6">
+              <div className="h-4 bg-gray-200 rounded-full"></div>
+            </div>
+
+            {/* Dates */}
+            <div className="grid grid-cols-2 gap-6 mt-8">
+
+              <div>
+                <div className="h-4 w-24 bg-gray-200 rounded mb-3"></div>
+                <div className="h-5 w-32 bg-gray-200 rounded"></div>
+              </div>
+
+              <div>
+                <div className="h-4 w-24 bg-gray-200 rounded mb-3"></div>
+                <div className="h-5 w-32 bg-gray-200 rounded"></div>
+              </div>
+
+            </div>
+
+            {/* Progress Notes */}
+            <div className="mt-6 border-t pt-5">
+
+              <div className="h-4 w-32 bg-gray-200 rounded mb-3"></div>
+
+              <div className="h-4 bg-gray-200 rounded w-full mb-2"></div>
+
+              <div className="h-4 bg-gray-200 rounded w-2/3"></div>
+
             </div>
 
           </div>
-        </div>
-      ))}
+        ))}
+
+      </div>
+
     </div>
   );
 };

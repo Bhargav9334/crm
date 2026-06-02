@@ -73,11 +73,11 @@ const EmployeeProjects = () => {
       </div>
 
       {projects.length > 0 ? (
-        <div className="space-y-7">
-          {projects.map((project) => (
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-7">
+  {projects.map((project) => (
             <div
               key={project.id}
-              className="bg-white rounded-3xl p-7 shadow-sm hover:shadow-md transition-all duration-300"
+              className="bg-white rounded-3xl p-7 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-300 h-full"
             >
               {/* Top */}
               <div className="flex justify-between items-start gap-4">
