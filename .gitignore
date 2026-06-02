@@ -23,3 +23,6 @@ build/
 # IDE
 .vscode/
 .idea/
+
+# Exclude nested Backend repo from root
+Backend/

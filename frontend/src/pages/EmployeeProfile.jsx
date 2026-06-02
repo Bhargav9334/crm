@@ -108,10 +108,7 @@ setFormData(res.data || {});
           {employee?.role || "-"}
         </p>
 
-        <div className="flex flex-wrap gap-6 mt-4">
-          <span>{employee?.email}</span>
-          <span>{employee?.number}</span>
-        </div>
+       
       </div>
 
  
@@ -172,19 +169,13 @@ setFormData(res.data || {});
 )}
     </div>
 
-    <div>
-      <p className="text-gray-500">Role</p>
-{editingSection === "personal" ? (
-  <input
-    name="role"
-    value={formData.role || ""}
-    onChange={handleChange}
-    className="w-full border rounded-xl p-3"
-  />
-) : (
-  <h3>{employee?.role || "-"}</h3>
-)}
-    </div>
+   <div>
+  <p className="text-gray-500">Salary</p>
+
+  <h3 className="font-semibold">
+    ₹ {employee?.salary || 0}
+  </h3>
+</div>
   </div>
 
   {editingSection === "personal" && (
