@@ -11,6 +11,7 @@ import {
   Building2,
   CreditCard,
   Briefcase,
+    Pencil,
 } from "lucide-react";
 
 const EmployeeProfile = () => {
@@ -19,6 +20,8 @@ const EmployeeProfile = () => {
   const [error, setError] = useState("");
   const [formData, setFormData] = useState({});
 const [editingSection, setEditingSection] =
+  useState(null);
+  const [profilePictureFile, setProfilePictureFile] =
   useState(null);
 const [saving, setSaving] = useState(false);
 
@@ -31,6 +34,36 @@ const [saving, setSaving] = useState(false);
     [e.target.name]: e.target.value,
   });
 };
+const handleProfilePictureChange = async (e) => {
+  const file = e.target.files[0];
+
+  if (!file) return;
+
+  setProfilePictureFile(file);
+
+  const token = localStorage.getItem("token");
+
+  const data = new FormData();
+  data.append("profilePicture", file);
+
+  try {
+    await axios.put(
+      API.employeeProfile,
+      data,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "multipart/form-data",
+        },
+      }
+    );
+
+    await fetchProfile();
+
+  } catch (err) {
+    console.error(err);
+  }
+};
 
 const handleSave = async () => {
   try {
@@ -38,25 +71,78 @@ const handleSave = async () => {
 
     const token = localStorage.getItem("token");
 
-    await axios.put(
-      API.updateEmployee(employee.id),
-      formData,
+    const data = new FormData();
+
+    data.append("name", formData.name || "");
+    data.append("number", formData.number || "");
+    data.append("email", formData.email || "");
+    data.append(
+      "pastCompany",
+      formData.pastCompany || ""
+    );
+    data.append(
+      "portfolio",
+      formData.portfolio || ""
+    );
+    data.append(
+      "pfAccount",
+      formData.pfAccount || ""
+    );
+    data.append(
+      "accountNumber",
+      formData.accountNumber || ""
+    );
+    data.append(
+      "salaryAccount",
+      formData.salaryAccount || ""
+    );
+    data.append(
+      "hobby",
+      formData.hobby || ""
+    );
+    data.append(
+      "futurePlans",
+      formData.futurePlans || ""
+    );
+    data.append(
+      "emergencyContact",
+      formData.emergencyContact || ""
+    );
+
+    if (profilePictureFile) {
+      data.append(
+        "profilePicture",
+        profilePictureFile
+      );
+    }
+
+    const res = await axios.put(
+      API.employeeProfile,
+      data,
       {
         headers: {
           Authorization: `Bearer ${token}`,
+          "Content-Type":
+            "multipart/form-data",
         },
       }
     );
 
-    setEmployee(formData);
-   setEditingSection(null); 
+    console.log("UPDATED:", res.data);
+
+    await fetchProfile();
+
+    setProfilePictureFile(null);
+    setEditingSection(null);
+
   } catch (err) {
-    console.error(err);
+    console.error(
+      err.response?.data || err
+    );
   } finally {
     setSaving(false);
   }
 };
-
   const fetchProfile = async () => {
     try {
       const token = localStorage.getItem("token");
@@ -100,16 +186,64 @@ setFormData(res.data || {});
       {/* Header */}
 
       <div className="bg-gradient-to-r from-blue-600 to-indigo-600 rounded-3xl p-8 text-white shadow-lg">
-        <h1 className="text-4xl font-bold">
-          {employee?.name || "Employee"}
-        </h1>
 
-        <p className="mt-2 text-lg">
-          {employee?.role || "-"}
-        </p>
+  <div className="flex items-center gap-8">
 
-       
+    {/*employee.profilePicture */}
+    <div className="relative">
+
+  <img
+    src={
+      profilePictureFile
+        ? URL.createObjectURL(
+            profilePictureFile
+          )
+        : employee?.profilePicture
+        ? employee.profilePicture
+        : `https://ui-avatars.com/api/?name=${
+            employee?.name || "E"
+          }`
+    }
+    alt="Profile"
+    className="w-32 h-32 rounded-full object-cover border-4 border-white"
+  />
+
+  <label className="absolute bottom-0 right-0 bg-white p-2 rounded-full cursor-pointer shadow-lg">
+    <Pencil
+      size={18}
+      className="text-blue-600"
+    />
+
+    <input
+      type="file"
+      hidden
+      accept="image/*"
+      onChange={
+        handleProfilePictureChange
+      }
+    />
+  </label>
+
+</div>
+    {/* Employee Info */}
+    <div>
+      <h1 className="text-5xl font-bold">
+        {employee?.name || "Employee"}
+      </h1>
+
+      <p className="mt-2 text-2xl">
+        {employee?.role || "-"}
+      </p>
+
+      <div className="mt-4 flex gap-6 text-lg">
+        <span>{employee?.email}</span>
+        <span>{employee?.number}</span>
       </div>
+    </div>
+
+  </div>
+
+</div>
 
  
 <div className="bg-white rounded-3xl p-8 mt-8 shadow-sm">

@@ -21,4 +21,6 @@ export const API = {
    employeeProfile: `${BASE_URL}/api/employees/profile`,
    updateEmployee: (id) =>
   `${BASE_URL}/api/employees/${id}`,
+   updateEmployeeProfile:
+  `${BASE_URL}/api/employees/profile`,
 };

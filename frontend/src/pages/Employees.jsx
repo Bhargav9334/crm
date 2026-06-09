@@ -5,6 +5,7 @@ import EmployeeTable from '../components/employeeTable'
 import { API } from "../config/api";
 import { apiFetch } from "../utils/apiFetch";
 import { EmployeeCardsSkeleton } from '../components/Skeletons';
+const BASE_URL = import.meta.env.VITE_API_BASE_URL;
 const Employees = () => {
     const [editingId, setEditingId] = useState(null);
     const [employees, setEmployees] = useState([]);
@@ -16,6 +17,10 @@ const Employees = () => {
     const [selectedEmployee, setSelectedEmployee] = useState(null);
     const [availableProjects, setAvailableProjects] = useState([]);
     const [loadingProjects, setLoadingProjects] = useState(false);
+    const [resumeFile, setResumeFile] = useState(null);
+    const [fileInputKey, setFileInputKey] = useState(0);
+    const [profilePictureFile, setProfilePictureFile] =
+  useState(null);
     const [formData, setFormData] = useState({
   name: "",
   number: "",
@@ -28,6 +33,7 @@ const Employees = () => {
   timeServed: "",
   portfolio: "",
   resume: "",
+  profilePicture: "",
   aadhar: "",
   pan: "",
   empId: "",
@@ -50,6 +56,8 @@ const Employees = () => {
             timeServed: employee.timeServed || "",
             portfolio: employee.portfolio || "",
             resume: employee.resume || "",
+            profilePicture:
+  employee.profilePicture || "",
             aadhar: employee.aadhar || "",
             pan: employee.pan || "",
             empId: employee.empId || "",
@@ -63,6 +71,9 @@ const Employees = () => {
         });
         setEditingId(employee.id);
         setShowForm(true);
+        setResumeFile(null);
+        setProfilePictureFile(null);
+        
     }, []);
 
     const handleDelete = useCallback((id) => {
@@ -247,56 +258,129 @@ const Employees = () => {
             : API.employees;
 
         try {
-            const savedEmployee = await apiFetch(url, {
-                method,
-                body: JSON.stringify(formData),
-            });
+            const data = new FormData();
 
-            if (editingId) {
-                // UPDATE
-                setEmployees(prev =>
-                    prev.map(emp =>
-                        emp.id === editingId ? savedEmployee : emp
-                    )
-                );
-            } else {
-                // CREATE
-                setEmployees(prev => [...prev, savedEmployee]);
-            }
+Object.keys(formData).forEach((key) => {
+  if (
+    formData[key] !== "" &&
+    formData[key] !== null &&
+    formData[key] !== undefined
+  ) {
+    data.append(key, formData[key]);
+  }
+});
 
-            // Reset form AFTER updating list
-            setFormData({
-                name: "",
-                number: "",
-                email: "",
-                DOB: "",
-                pastCompany: "",
-                role: "",
-                salary: "",
-                timeServed: "",
-                portfolio: "",
-                resume: "",
-                aadhar: "",
-                pan: "",
-                empId: "",
-                pfAccount: "",
-                accountNumber: "",
-                salaryAccount: "",
-                hobby: "",
-                futurePlans: "",
-                emergencyContact: "",
-                password: "",
-            });
+if (resumeFile) {
+  data.append("resume", resumeFile);
+}
+if (profilePictureFile) {
+  data.append(
+    "profilePicture",
+    profilePictureFile
+  );
+}
 
-            setShowForm(false);
-            setEditingId(null);
+const token = localStorage.getItem("token");
 
-        } catch (err) {
-            console.log("FULL ERROR:", err);
-            alert(err.message || "Failed to save employee");
-        }
+const response = await fetch(url, {
+  method,
+  headers: {
+    Authorization: `Bearer ${token}`,
+  },
+  body: data,
+});
 
-    };
+const savedEmployee = await response.json();
+console.log("editingId =", editingId);
+console.log("password =", formData.password);
+// Password Update
+if (
+  editingId &&
+  formData.password &&
+  formData.password.trim() !== ""
+) {
+  const passwordRes = await fetch(
+  `${BASE_URL}/api/password/reset`,
+  {
+    method: "PUT",
+   headers: {
+  "Content-Type": "application/json",
+  Authorization: `Bearer ${token}`,
+},
+    body: JSON.stringify({
+      targetCollection: "employees",
+      targetUserId: editingId,
+      newPassword: formData.password,
+    }),
+  }
+);
+
+const passwordData = await passwordRes.json();
+if (!passwordRes.ok) {
+  throw new Error(
+    passwordData.message ||
+      "Password update failed"
+  );
+}
+
+console.log("PASSWORD RESPONSE", passwordData);
+}
+
+// Update Local State
+if (editingId) {
+  setEmployees((prev) =>
+    prev.map((emp) =>
+      emp.id === editingId
+        ? {
+            ...emp,
+            ...formData,
+          }
+        : emp
+    )
+  );
+} else {
+  setEmployees((prev) => [
+    ...prev,
+    savedEmployee,
+  ]);
+}
+
+// Reset Form
+setFormData({
+  name: "",
+  number: "",
+  email: "",
+  DOB: "",
+  pastCompany: "",
+  role: "",
+  salary: "",
+  timeServed: "",
+  portfolio: "",
+  resume: "",
+  profilePicture: "",
+  aadhar: "",
+  pan: "",
+  empId: "",
+  pfAccount: "",
+  accountNumber: "",
+  salaryAccount: "",
+  hobby: "",
+  futurePlans: "",
+  emergencyContact: "",
+  password: "",
+});
+
+setResumeFile(null);
+setProfilePictureFile(null);
+setShowForm(false);
+setEditingId(null);
+setFileInputKey((prev) => prev + 1);
+
+} catch (err) {
+  console.log("FULL ERROR:", err);
+  alert(err.message || "Failed to save employee");
+}
+    };                  
 
     const handleChange = e => {
         setFormData(prev => ({
@@ -305,6 +389,14 @@ const Employees = () => {
         }));
 
     };
+    const handleResumeUpload = (e) => {
+  setResumeFile(e.target.files[0]);
+};
+const handleProfilePictureUpload = (e) => {
+  setProfilePictureFile(
+    e.target.files[0]
+  );
+};
     return (
         <>
             <div className='w-full min-h-screen bg-gray-50'>
@@ -318,12 +410,48 @@ const Employees = () => {
                                 <p className='text-gray-600'>Manage your employees</p>
 
                             </div>
+<button
+  onClick={() => {
+    setEditingId(null);
+
+    setFormData({
+      name: "",
+      number: "",
+      email: "",
+      password: "",
+      DOB: "",
+      pastCompany: "",
+      role: "",
+      salary: "",
+      timeServed: "",
+      portfolio: "",
+      resume: "",
+      profilePicture: "",
+      aadhar: "",
+      pan: "",
+      empId: "",
+      pfAccount: "",
+      accountNumber: "",
+      salaryAccount: "",
+      hobby: "",
+      futurePlans: "",
+      emergencyContact: "",
+    });
+
+    setResumeFile(null);
+    setProfilePictureFile(null);
+
+    setFileInputKey(prev => prev + 1);
+
+    setShowForm(true);
+  }}
+  className="inline-flex items-center gap-2 px-4 py-2.5 text-sm font-semibold text-white bg-[#667CFA] rounded-lg"
+>
+  <Plus size={16} />
+  Add Employee
+</button>
 
 
-                            <button onClick={() => setShowForm(true)} className='inline-flex items-center gap-2 px-4 py-2.5 text-sm font-semibold
-                     text-white bg-[#667CFA] rounded-lg active:scale-95
-                     transition-all duration-200
-                     focus:outline-none focus:ring-2 focus:ring-black/30'><Plus size={16} />Add Employee</button>
 
                         </div>
                     </div>
@@ -364,7 +492,11 @@ const Employees = () => {
   <Input
     type="password"
     name="password"
-    placeholder="Enter Password"
+    placeholder={
+      editingId
+        ? "Enter new password"
+        : "Enter password"
+    }
     value={formData.password}
     onChange={handleChange}
     required={!editingId}
@@ -375,6 +507,41 @@ const Employees = () => {
                                             <label className="text-sm font-medium">Date of Birth</label>
                                             <Input name="DOB" type="date" value={formData.DOB} onChange={handleChange} />
                                         </div>
+                                        <div className="md:col-span-2">
+  <label className="block text-sm font-medium text-gray-700 mb-2">
+    Profile Picture
+  </label>
+
+  <input
+    type="file"
+    accept="image/*"
+    onChange={handleProfilePictureUpload}
+    className="block w-full text-sm text-gray-600"
+  />
+
+  {profilePictureFile?.name && (
+    <div className="mt-2 flex items-center justify-between rounded-lg bg-blue-50 border border-blue-200 px-3 py-2">
+      <p className="text-blue-700 text-sm">
+        {profilePictureFile.name}
+      </p>
+      <img
+  src={URL.createObjectURL(
+    profilePictureFile
+  )}
+  alt="preview"
+  className="w-20 h-20 rounded-full object-cover border mt-2"
+/>
+
+      <button
+        type="button"
+        onClick={() => setProfilePictureFile(null)}
+        className="text-red-500 font-bold"
+      >
+        ✕
+      </button>
+    </div>
+  )}
+</div>
                                         {/* <div>
                                         <label className="text-sm font-medium">Sex:</label>
                                         <select name="" id="" className='px-7 py-3 rounded-md'>
@@ -417,14 +584,39 @@ const Employees = () => {
                                 </div>
 
                                 <div>
-                                    <label className="text-sm font-medium">Resume (Copy & Paste)</label>
-                                    <textarea
-                                        name="resume"
-                                        rows={4}
-                                        className="w-full border rounded-md px-3 py-2 focus:ring-2 focus:ring-blue-500"
-                                        value={formData.resume}
-                                        onChange={handleChange}
-                                    />
+                               
+<div className="mt-4">
+  <label className="block text-sm font-medium text-gray-700 mb-2">
+    Resume Upload
+  </label>
+
+  <input
+  key={fileInputKey}
+  type="file"
+  accept=".pdf,.doc,.docx"
+  onChange={handleResumeUpload}
+  className="block w-full text-sm text-gray-600"
+/>
+
+  {resumeFile?.name && (
+    <div className="mt-2 flex items-center justify-between rounded-lg bg-green-50 border border-green-200 px-3 py-2">
+      <p className="text-green-700 text-sm font-medium">
+        {resumeFile.name}
+      </p>
+
+      <button
+        type="button"
+ onClick={() => {
+  setResumeFile(null);
+  setFileInputKey(prev => prev + 1);
+}}
+        className="text-red-500 font-bold text-lg"
+      >
+        ✕
+      </button>
+    </div>
+  )}
+</div>
                                 </div>
                                 <div>
                                     <h2 className="text-lg font-semibold mb-4">KYC Documents</h2>
@@ -541,6 +733,7 @@ const Employees = () => {
                                             timeServed: "",
                                             portfolio: "",
                                             resume: "",
+                                            profilePicture: "",
                                             aadhar: "",
                                             pan: "",
                                             empId: "",
@@ -552,7 +745,11 @@ const Employees = () => {
                                             emergencyContact: "",
                                             password: "",
 
-                                        }); setShowForm(false)
+                                        }); 
+                                      setResumeFile(null);
+setProfilePictureFile(null);
+setFileInputKey(prev => prev + 1);  
+                                        setShowForm(false)
                                     }} className="bg-white text-black border">
                                         Cancel
                                     </Button>
@@ -574,13 +771,19 @@ const Employees = () => {
                                 <p className="text-gray-600">
                                     Add your employee details.
                                 </p>
-                                <button
-                                    onClick={() => setShowForm(true)}
-                                    className="inline-flex items-center gap-2 px-4 py-2.5 text-sm font-semibold
-                   text-white bg-[#667CFA] rounded-lg"
-                                >
-                                    <Plus size={16} /> Click to add
-                                </button>
+                               <button
+  onClick={() => {
+    setEditingId(null);
+setResumeFile(null);
+setProfilePictureFile(null);
+setFileInputKey(prev => prev + 1);
+setShowForm(true);
+  }}
+  className="inline-flex items-center gap-2 px-4 py-2.5 text-sm font-semibold text-white bg-[#667CFA] rounded-lg"
+>
+  <Plus size={16} />
+  Click to add
+</button>
                             </div>
                         </section>
                     ) : (

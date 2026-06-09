@@ -90,20 +90,43 @@ if (loading) {
     <div className="p-6 bg-slate-50 min-h-screen">
       {/* Header */}
 
-      <div className="bg-gradient-to-r from-indigo-600 to-blue-600 rounded-3xl p-8 text-white shadow-lg">
-        <h1 className="text-4xl font-bold">
-          Welcome, {employee?.name || "Employee"}
-        </h1>
+<div className="bg-gradient-to-r from-indigo-600 to-blue-600 rounded-3xl p-8 text-white shadow-lg">
 
-        <p className="mt-2 text-lg">
-          {employee?.role || "-"}
-        </p>
+  <div className="flex items-center gap-6 ">
 
-        <div className="flex flex-wrap gap-6 mt-5">
-          <span>{employee?.email || "-"}</span>
-          <span>{employee?.number || "-"}</span>
-        </div>
+    {/* Profile Photo */}
+    {employee?.profilePicture ? (
+      <img
+        src={employee.profilePicture}
+        alt={employee.name}
+        className="w-28 h-28 rounded-full object-cover border-4 border-white shadow-lg"
+      />
+    ) : (
+      <div className="w-28 h-28 rounded-full bg-white/20 border-4 border-white flex items-center justify-center text-4xl font-bold">
+        {employee?.name?.[0]?.toUpperCase() || "E"}
       </div>
+    )}
+
+    {/* Employee Info */}
+    <div>
+      <h1 className="text-4xl font-bold">
+        Welcome, {employee?.name || "Employee"}
+      </h1>
+
+      <p className="mt-2 text-xl text-white/90">
+        {employee?.role || "-"}
+      </p>
+
+      <div className="flex flex-wrap gap-6 mt-5 text-lg">
+        <span>{employee?.email || "-"}</span>
+        <span>{employee?.number || "-"}</span>
+      </div>
+    </div>
+
+  </div>
+
+</div>
+  
 
       {/* Stats */}
 
