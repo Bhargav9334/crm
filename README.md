@@ -77,7 +77,7 @@ VITE_API_BASE_URL=https://your-api-url.com
 **Bhargav Sinha** — Software Engineer · Full-Stack MERN Developer
 
 - GitHub: [@Bhargav9334](https://github.com/Bhargav9334)
-- Portfolio: [portfolio-blush-sigma-22.vercel.app](https://portfolio-blush-sigma-22.vercel.app)
+- Portfolio: [bhargavsinha.vercel.app](https://bhargavsinha.vercel.app)
 - Email: bhargavsinha93@gmail.com
 
 If you found this project useful, consider giving it a ⭐
